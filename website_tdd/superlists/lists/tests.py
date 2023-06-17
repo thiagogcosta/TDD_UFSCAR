@@ -1,7 +1,6 @@
 from django.urls import resolve
 from django.test import TestCase
 from lists.views import home_page
-from lists.models import Item
 
 class HomePageTest(TestCase):
 
@@ -13,11 +12,22 @@ class HomePageTest(TestCase):
 		response = self.client.get('/')
 		self.assertTemplateUsed(response, 'home.html')
 
+	def test_only_saves_items_when_necessary(self):
+		self.client.get('/')
+		self.assertEquals(Item.objects.count(), 0)
+
 	def test_can_save_a_POST_request(self):
 		response = self.client.post('/', data={'item_text': 'A new list item'})
+
+		self.assertEquals(Item.objects.count(), 1)
+		new_item = Item.objects.first()
+		self.assertEquals(new_item.text, 'A new list item')
+
 		self.assertIn('A new list item', response.content.decode())
 		self.assertTemplateUsed(response, 'home.html')
-		
+
+
+from lists.models import Item
 
 class ItemModelTest(TestCase):
 
