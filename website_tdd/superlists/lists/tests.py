@@ -21,13 +21,13 @@ class HomePageTest(TestCase):
 class NewListTest(TestCase):
 
 	def test_can_save_a_POST_request(self):
-		self.client.post('/lists/new', data={'item_text': 'A new list item'})
+		self.client.post('/lists/new', data={'item_text': 'A new list item', 'item_priority': 'alto'})
 		self.assertEquals(Item.objects.count(), 1)
 		new_item = Item.objects.first()
 		self.assertEquals(new_item.text, 'A new list item')
 
 	def test_redirects_after_POST(self):
-		response = self.client.post('/lists/new', data={'item_text': 'A new list item'})
+		response = self.client.post('/lists/new', data={'item_text': 'A new list item', 'item_priority': 'alto'})
 		new_list = List.objects.first()
 		self.assertRedirects(response, f'/lists/{new_list.id}/')
 
@@ -39,7 +39,7 @@ class NewItemTets(TestCase):
 
 		self.client.post(
 			f'/lists/{correct_list.id}/add_item',
-			data={'item_text': 'A new item for an existing list'}
+			data={'item_text': 'A new item for an existing list', 'item_priority': 'alto'}
 		)
 
 		self.assertEqual(Item.objects.count(), 1)
@@ -53,7 +53,7 @@ class NewItemTets(TestCase):
 
 		response = self.client.post(
 			f'/lists/{correct_list.id}/add_item',
-			data={'item_text': 'A new item for an existing list'}
+			data={'item_text': 'A new item for an existing list', 'item_priority': 'alto'}
 		)
 
 		self.assertRedirects(response, f'/lists/{correct_list.id}/')
